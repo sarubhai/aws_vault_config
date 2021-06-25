@@ -10,11 +10,11 @@ Auth methods are the components in Vault that perform authentication and are res
 Types:
 - Tokens
 - UserPass
+- AppRole
 - LDAP
 - Okta, GitHub, RADIUS, Cloud Foundry
 - AWS, Azure, GoogleCloud, AliCloud, OracleCloudInfrastructure
 - Kubernetes
-- AppRole
 - TLS Certs
 - Kerberos
 - JWT/OIDC
@@ -31,6 +31,7 @@ Some secrets engines
 
 Types:
 - Key/Value
+- Transit
 - Dynamic
     - Databases ()
     - AWS, Azure, GoogleCloud, GoogleCloud KMS, AliCloud,
@@ -40,7 +41,7 @@ Types:
     - Open LDAP
     - RabbitMQ
 - Transform
-- Transit
+
 - SSH
 - TOTP
 - PKI

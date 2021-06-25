@@ -27,6 +27,20 @@ resource "vault_policy" "dev_admin_policy" {
 }
 
 
+resource "vault_policy" "kv_read_policy" {
+  name     = "kv-read"
+  policy   = file("${path.module}/kv-read-policy.hcl")
+  provider = vault.root
+}
+
+resource "vault_policy" "dev_kv_read_policy" {
+  name       = "kv-read"
+  policy     = file("${path.module}/kv-read-policy.hcl")
+  provider   = vault.dev
+  depends_on = [var.dev_namespace]
+}
+
+
 
 # Format Policy
 # vault policy fmt admin-policy.hcl

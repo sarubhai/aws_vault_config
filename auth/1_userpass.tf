@@ -1,18 +1,6 @@
 # Name: userpass.tf
 # Owner: Saurav Mitra
-# Description: This terraform config will create Vault Auth Methods
-
-
-terraform {
-  required_providers {
-    vault = {
-      source                = "hashicorp/vault"
-      version               = "2.21.0"
-      configuration_aliases = [vault.root, vault.dev]
-    }
-  }
-}
-
+# Description: This terraform config will create Vault UserPass Auth Method
 
 resource "vault_auth_backend" "userpass" {
   type     = "userpass"
@@ -54,7 +42,7 @@ resource "vault_generic_endpoint" "dev_user_admin" {
 }
 EOT
   provider   = vault.dev
-  depends_on = [vault_auth_backend.userpass, var.dev_namespace]
+  depends_on = [vault_auth_backend.dev_userpass, var.dev_namespace]
 }
 
 
@@ -62,6 +50,10 @@ EOT
 # Enable Auth
 # vault auth enable -namespace=dev userpass
 # curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/sys/auth/userpass -d '{"type": "userpass"}'
+
+# List Auth
+# vault auth list -namespace=dev
+# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/sys/auth
 
 # Create User
 # vault write -namespace=dev auth/userpass/users/admin password=$admin_password policies=admin

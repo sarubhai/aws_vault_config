@@ -45,7 +45,7 @@ resource "vault_namespace" "dev" {
 
 # $ export VAULT_NAMESPACE="dev"
 provider "vault" {
-  namespace = "dev"
+  namespace = trimsuffix(vault_namespace.dev.id, "/")
   alias     = "dev"
 }
 
@@ -86,7 +86,7 @@ module "secrets" {
     vault.dev  = vault.dev
   }
 
-  dev_namespace  = vault_namespace.dev
+  dev_namespace = vault_namespace.dev
 }
 
 
