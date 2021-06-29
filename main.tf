@@ -74,6 +74,11 @@ module "auth" {
 
   dev_namespace  = vault_namespace.dev
   admin_password = var.admin_password
+  okta_org       = var.okta_org
+  github_org     = var.github_org
+  github_user    = var.github_user
+  github_team    = var.github_team
+  ca_cert_path   = var.ca_cert_path
 }
 
 
@@ -86,7 +91,8 @@ module "secrets" {
     vault.dev  = vault.dev
   }
 
-  dev_namespace = vault_namespace.dev
+  dev_namespace  = vault_namespace.dev
+  admin_password = var.admin_password
 }
 
 

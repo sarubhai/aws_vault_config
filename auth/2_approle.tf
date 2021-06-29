@@ -44,7 +44,7 @@ resource "vault_approle_auth_backend_role" "dev_webapp" {
 
 # Create AppRole
 # vault write -namespace=dev auth/approle/role/dev-webapp policies=kv-read
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/approle/role/dev-webapp -d "{\"policies\": \"kv-read\"}"
+# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/approle/role/dev-webapp -d '{"policies": "kv-read"}'
 
 # Read AppRole
 # vault read -namespace=dev auth/approle/role/dev-webapp
@@ -56,15 +56,17 @@ resource "vault_approle_auth_backend_role" "dev_webapp" {
 
 # Read AppRole Role ID
 # vault read -namespace=dev auth/approle/role/dev-webapp/role-id
+# 31a9a5a7-bebb-980e-af5a-c64d0d6862a8
 # curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/auth/approle/role/dev-webapp/role-id
 
 # Get AppRole Secret ID
 # vault write -namespace=dev -f auth/approle/role/dev-webapp/secret-id
+# b0ef6f8d-1faf-13e3-e7bd-6f5a39d93a14
 # curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/approle/role/dev-webapp/secret-id
 
 # AppRole Login
-# vault write -namespace=dev auth/approle/login role_id=$ROLEID secret_id=$SECRETID
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/approle/login -d "{\"role_id\": \"$ROLEID\", \"secret_id\": \"$SECRETID\"}"
+# vault write -namespace=dev auth/approle/login role_id=31a9a5a7-bebb-980e-af5a-c64d0d6862a8 secret_id=b0ef6f8d-1faf-13e3-e7bd-6f5a39d93a14
+# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/approle/login -d '{"role_id": "31a9a5a7-bebb-980e-af5a-c64d0d6862a8", "secret_id": "b0ef6f8d-1faf-13e3-e7bd-6f5a39d93a14"}'
 
 # Delete AppRole
 # vault delete -namespace=dev auth/approle/role/dev-webapp

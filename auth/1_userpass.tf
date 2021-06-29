@@ -56,8 +56,8 @@ EOT
 # curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/sys/auth
 
 # Create User
-# vault write -namespace=dev auth/userpass/users/admin password=$admin_password policies=admin
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/userpass/users/admin -d "{\"password\": \"$admin_password\", \"policies\": \"admin,default\"}"
+# vault write -namespace=dev auth/userpass/users/admin password=Password123456 policies=admin
+# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/userpass/users/admin -d '{"password": "Password123456", "policies": "admin,default"}'
 
 # Read User
 # vault read -namespace=dev auth/userpass/users/admin
@@ -68,14 +68,14 @@ EOT
 # curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/auth/userpass/users
 
 # User Login
-# vault login -method=userpass username=admin password=$admin_password
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/userpass/login/admin -d "{\"password\": \"$admin_password\"}"
+# vault login -method=userpass username=admin password=Password123456
+# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/userpass/login/admin -d '{"password": "Password123456"}'
 
 # Update User Password
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/userpass/users/admin/password -d "{\"password\": \"new_$admin_password\"}"
+# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/userpass/users/admin/password -d '{"password": "Password12345678"}'
 
 # Update User Policies
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/userpass/users/admin/policies -d "{\"policies\": [\"admin\", \"default\"]}"
+# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/userpass/users/admin/policies -d '{"policies": ["admin", "default"]}'
 
 # Delete User
 # vault delete -namespace=dev auth/userpass/users/admin

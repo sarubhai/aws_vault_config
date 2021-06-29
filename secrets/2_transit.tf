@@ -9,24 +9,28 @@ resource "vault_mount" "transit" {
 }
 
 resource "vault_transit_secret_backend_key" "webapp_key" {
-  backend  = vault_mount.transit.path
-  name     = "webapp_key"
-  provider = vault.root
+  backend          = vault_mount.transit.path
+  name             = "webapp_key"
+  deletion_allowed = true
+  provider         = vault.root
+  depends_on       = [vault_mount.transit]
 }
 
 
 
 resource "vault_mount" "dev_transit" {
-  type     = "transit"
-  path     = "transit"
-  provider = vault.dev
+  type       = "transit"
+  path       = "transit"
+  provider   = vault.dev
+  depends_on = [var.dev_namespace]
 }
 
 resource "vault_transit_secret_backend_key" "dev_webapp_key" {
-  backend    = vault_mount.dev_transit.path
-  name       = "dev_webapp_key"
-  provider   = vault.dev
-  depends_on = [var.dev_namespace]
+  backend          = vault_mount.dev_transit.path
+  name             = "dev_webapp_key"
+  deletion_allowed = true
+  provider         = vault.dev
+  depends_on       = [var.dev_namespace, vault_mount.dev_transit]
 }
 
 
@@ -70,7 +74,7 @@ resource "vault_transit_secret_backend_key" "dev_webapp_key" {
 # curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transit/rewrap/dev_webapp_key/rotate -d '{"ciphertext": "vault:v1:NvFoevvO6WYybe81dZZ/afHk7aCdXrHprYMQDWJuaMgOZ7PXcEeS3bht9w=="}'
 
 # Update Key Configuration
-# vault write -namespace=dev -f transit/keys/dev_webapp_key/config deletion_allowed=true
+# vault write -namespace=dev -f transit/keys/dev_webapp_key/config deletion_allowed=false
 # curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transit/keys/dev_webapp_key/config -d '{"deletion_allowed": true}'
 
 # Delete Key

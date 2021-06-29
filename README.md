@@ -12,42 +12,84 @@ Types:
 - UserPass
 - AppRole
 - LDAP
-- Okta, GitHub, RADIUS, Cloud Foundry
-- AWS, Azure, GoogleCloud, AliCloud, OracleCloudInfrastructure
-- Kubernetes
+- Okta
+- GitHub, [RADIUS, Cloud Foundry]
 - TLS Certs
-- Kerberos
-- JWT/OIDC
+- AWS, [Azure, GoogleCloud, AliCloud, OracleCloudInfrastructure]
+- [Kubernetes]
+- [Kerberos]
+- [JWT/OIDC]
 
 ### Secrets Engine
 Secrets engines are components which store, generate, or encrypt data. 
 Some secrets engines 
 . simply store and read data
 . connect to other services and generate dynamic credentials on demand 
-. allows Vault to encode and decode sensitive values residing in external systems such as databases or file systems
+. allows Vault to encode and decode sensitive values residing in external systems
 . provide encryption as a service
-. totp generation
-. certificates
+. generate/validate totp
+. generate certificates
 
 Types:
 - Key/Value
 - Transit
+- Transform
 - Dynamic
-    - Databases ()
-    - AWS, Azure, GoogleCloud, GoogleCloud KMS, AliCloud,
+    - Databases 
+      - PostgreSQL
+      - Oracle
+      - MySQL
+      - MongoDB
+      - Elasticsearch
+    - RabbitMQ
+    - Open LDAP
+    - AWS, [Azure, GoogleCloud, GoogleCloud KMS, AliCloud]
     - Active Directory
     - Consul
-    - Key Management
-    - Open LDAP
-    - RabbitMQ
-- Transform
-
 - SSH
 - TOTP
 - PKI
+- Key Management [AWS KMS, Azure Key Vault]
+- KMIP
 
 ### Policies
 Policies provide a declarative way to grant or forbid access to certain paths and operations in Vault.
 
 ### Audit Devices
 Audit devices are the components in Vault that keep a detailed log of all requests and response to Vault.
+
+### Prerequisite
+Terraform is already installed in local machine.
+## Usage
+- Clone this repository
+- Add the below variable values in terraform.tfvars file under the root directory
+
+### terraform.tfvars
+```
+admin_password = "Password123456"
+
+okta_org = "dev-12345678"
+
+github_org = "example"
+
+github_user = "johndoe"
+
+github_team = "devops"
+
+ca_cert_path = "/etc/ssl/certs/ca.cert"
+```
+- Change other variables in variables.tf file if needed
+
+- Set the Vault Login credentials
+
+```
+export VAULT_TOKEN=s.ZaXY7yVwKBKalAjmCJTMy3y3
+export VAULT_ADDR=https://dc1-vault1.local:8200
+```
+
+- terraform init
+- terraform plan
+- terraform apply -auto-approve -refresh=false
+
+
+Finally login to Vault UI to validate the configurations

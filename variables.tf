@@ -25,3 +25,28 @@ variable "admin_password" {
   description = "Admin password for UserPass Auth."
   default     = "Password123456"
 }
+
+variable "okta_org" {
+  description = "Okta Organization."
+  default     = "dev-123456"
+}
+
+variable "github_org" {
+  description = "Github Organization Name."
+  default     = "example"
+}
+
+variable "github_user" {
+  description = "Github User Name."
+  default     = "johndoe"
+}
+
+variable "github_team" {
+  description = "Github Team Name."
+  default     = "devops"
+}
+
+variable "ca_cert_path" {
+  description = "CA Certificate file path for TLS Auth."
+  default     = "/etc/pki/tls/cert.pem"
+}
