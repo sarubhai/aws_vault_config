@@ -14,7 +14,7 @@ Types:
 - LDAP
 - Okta
 - GitHub, [RADIUS, Cloud Foundry]
-- TLS Certs
+- TLS Certificates
 - AWS, [Azure, GoogleCloud, AliCloud, OracleCloudInfrastructure]
 - [Kubernetes]
 - [Kerberos]
@@ -44,13 +44,18 @@ Types:
     - RabbitMQ
     - Open LDAP
     - AWS, [Azure, GoogleCloud, GoogleCloud KMS, AliCloud]
-    - Active Directory
-    - Consul
+    - [Active Directory]
+    - [Consul]
 - SSH
 - TOTP
 - PKI
-- Key Management [AWS KMS, Azure Key Vault]
-- KMIP
+- Key Management
+  - AWS KMS
+  - [Azure Key Vault]
+- [KMIP]
+
+
+Note: * [TO-DO]
 
 ### Policies
 Policies provide a declarative way to grant or forbid access to certain paths and operations in Vault.

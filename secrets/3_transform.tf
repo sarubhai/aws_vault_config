@@ -1,6 +1,8 @@
 # Name: transform.tf
 # Owner: Saurav Mitra
 # Description: This terraform config will create Vault Transform Secrets Engine
+# The Transform secrets engine handles secure data transformation and tokenization against provided input value.
+# The secret engine currently supports fpe, masking, and tokenization as data transformation types.
 
 resource "vault_mount" "transform" {
   type     = "transform"
@@ -93,96 +95,96 @@ resource "vault_transform_transformation" "dev-ccn-fpe" {
 
 
 
+/*
 # Enable Transform
-# vault secrets enable -namespace=dev -path=transform transform
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/sys/mounts/transform -d '{"type": "transform"}'
+vault secrets enable -namespace=dev -path=transform transform
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/sys/mounts/transform -d '{"type": "transform"}'
 
 # List Secrets Engines
-# vault secrets list -namespace=dev
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/sys/mounts
+vault secrets list -namespace=dev
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/sys/mounts
 
 
 # Create Role
-# vault write -namespace=dev -f transform/role/payments transformations=ccn-fpe
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/role/payments -d '{"transformations": ["ccn-fpe"]}'
+vault write -namespace=dev -f transform/role/payments transformations=ccn-fpe
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/role/payments -d '{"transformations": ["ccn-fpe"]}'
 
 # Read Role
-# vault read -namespace=dev transform/role/payments
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/transform/role/payments
+vault read -namespace=dev transform/role/payments
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/transform/role/payments
 
 # List Roles
-# vault list -namespace=dev transform/role
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/transform/role
+vault list -namespace=dev transform/role
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/transform/role
 
 
 # Create Transformation
-# vault write -namespace=dev -f transform/transformation/ccn-fpe type=fpe template=ccn tweak_source=internal allowed_roles=payments
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/transformation/ccn-fpe -d '{"type": "fpe","template": "ccn","tweak_source": "internal","allowed_roles": ["payments"]}'
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/transformations/fpe/ccn-fpe -d '{"template": "ccn","tweak_source": "internal","allowed_roles": ["payments"]}'
+vault write -namespace=dev -f transform/transformation/ccn-fpe type=fpe template=ccn tweak_source=internal allowed_roles=payments
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/transformation/ccn-fpe -d '{"type": "fpe","template": "ccn","tweak_source": "internal","allowed_roles": ["payments"]}'
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/transformations/fpe/ccn-fpe -d '{"template": "ccn","tweak_source": "internal","allowed_roles": ["payments"]}'
 
 # Read Transformation
-# vault read -namespace=dev transform/transformation/ccn-fpe
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/transform/transformation/ccn-fpe
+vault read -namespace=dev transform/transformation/ccn-fpe
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/transform/transformation/ccn-fpe
 
 # List Transformations
-# vault list -namespace=dev transform/transformation
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/transform/transformation
+vault list -namespace=dev transform/transformation
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/transform/transformation
 
 
 # Create Template
-# vault write -namespace=dev -f transform/template/ccn type=regex pattern=(\\d{4})-(\\d{4})-(\\d{4})-(\\d{4}) alphabet=numerics
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/template/ccn -d '{"type": "regex","pattern": "(\\d{4})-(\\d{4})-(\\d{4})-(\\d{4})","alphabet": "numerics"}'
+vault write -namespace=dev -f transform/template/ccn type=regex pattern=(\\d{4})-(\\d{4})-(\\d{4})-(\\d{4}) alphabet=numerics
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/template/ccn -d '{"type": "regex","pattern": "(\\d{4})-(\\d{4})-(\\d{4})-(\\d{4})","alphabet": "numerics"}'
 
 # Read Template
-# vault read -namespace=dev transform/template/ccn
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/transform/template/ccn
+vault read -namespace=dev transform/template/ccn
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/transform/template/ccn
 
 # List Templates
-# vault list -namespace=dev transform/template
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/transform/template
+vault list -namespace=dev transform/template
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/transform/template
 
 
 # Create Alphabet
-# vault write -namespace=dev -f transform/alphabet/numerics alphabet=0123456789
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/alphabet/numerics -d '{"alphabet": "0123456789"}'
+vault write -namespace=dev -f transform/alphabet/numerics alphabet=0123456789
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/alphabet/numerics -d '{"alphabet": "0123456789"}'
 
 # Read Alphabet
-# vault read -namespace=dev transform/alphabet/numerics
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/transform/alphabet/numerics
+vault read -namespace=dev transform/alphabet/numerics
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/transform/alphabet/numerics
 
 # List Alphabets
-# vault list -namespace=dev transform/alphabet
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/transform/alphabet
-
+vault list -namespace=dev transform/alphabet
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/transform/alphabet
 
 
 # Encode Data
-# vault write -namespace=dev transform/encode/payments value=1111-2222-3333-4444 transformation=ccn-fpe
+vault write -namespace=dev transform/encode/payments value=1111-2222-3333-4444 transformation=ccn-fpe
 # 5371-5037-5573-8166
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/encode/payments -d '{"value": "1111-2222-3333-4444","transformation": "ccn-fpe"}'
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/encode/payments -d '{"value": "1111-2222-3333-4444","transformation": "ccn-fpe"}'
 
 # Decode Data
-# vault write -namespace=dev transform/decode/payments value=5371-5037-5573-8166 transformation=ccn-fpe
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/decode/payments -d '{"value": "5371-5037-5573-8166","transformation": "ccn-fpe"}'
-
+vault write -namespace=dev transform/decode/payments value=5371-5037-5573-8166 transformation=ccn-fpe
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/transform/decode/payments -d '{"value": "5371-5037-5573-8166","transformation": "ccn-fpe"}'
 
 
 # Delete Alphabet
-# vault delete -namespace=dev /transform/alphabet/numerics
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/transform/alphabet/numerics
+vault delete -namespace=dev /transform/alphabet/numerics
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/transform/alphabet/numerics
 
 # Delete Template
-# vault delete -namespace=dev /transform/template/ccn
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/transform/template/ccn
+vault delete -namespace=dev /transform/template/ccn
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/transform/template/ccn
 
 # Delete Transformation
-# vault delete -namespace=dev /transform/transformation/ccn-fpe
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/transform/transformation/ccn-fpe
+vault delete -namespace=dev /transform/transformation/ccn-fpe
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/transform/transformation/ccn-fpe
 
 # Delete Role
-# vault delete -namespace=dev transform/role/ccn-fpe
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/transform/role/ccn-fpe
+vault delete -namespace=dev transform/role/ccn-fpe
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/transform/role/ccn-fpe
 
 # Disable KV
-# vault secrets disable -namespace=dev transform
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/sys/mounts/transit
+vault secrets disable -namespace=dev transform
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/sys/mounts/transit
+*/

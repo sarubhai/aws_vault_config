@@ -50,3 +50,28 @@ variable "ca_cert_path" {
   description = "CA Certificate file path for TLS Auth."
   default     = "/etc/pki/tls/cert.pem"
 }
+
+variable "aws_account_id" {
+  description = "AWS Account Id."
+  default     = "123456789012"
+}
+
+variable "auth_aws_access_key" {
+  description = "AWS Access Key to setup Vault Auth method."
+  default     = "ABCDEFGHIJKLMNOPQRST"
+}
+
+variable "auth_aws_secret_key" {
+  description = "AWS Secret Key to setup Vault Auth method."
+  default     = "ABCDEFGHIJ1234567890KLMNOPQRST"
+}
+
+variable "secrets_aws_access_key" {
+  description = "AWS Access Key to setup Vault Secrets engine."
+  default     = "ABCDEFGHIJKLMNOPQRST"
+}
+
+variable "secrets_aws_secret_key" {
+  description = "AWS Secret Key to setup Vault Secrets engine."
+  default     = "ABCDEFGHIJ1234567890KLMNOPQRST"
+}

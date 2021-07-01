@@ -1,6 +1,7 @@
 # Name: ds-mysql.tf
 # Owner: Saurav Mitra
 # Description: This terraform config will create Vault Dynamic Secrets Engine For MySQL database
+# Generates database credentials dynamically based on configured roles for MySQL database.
 
 resource "vault_mount" "mysql" {
   path     = "mysql"
@@ -62,53 +63,58 @@ resource "vault_database_secret_backend_role" "dev-role-mysql" {
 
 
 
+/*
 # Enable Database
-# vault secrets enable -namespace=dev -path=mysql database
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/sys/mounts/mysql -d '{"type": "database"}'
+vault secrets enable -namespace=dev -path=mysql database
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/sys/mounts/mysql -d '{"type": "database"}'
 
 # List Secrets Engines
-# vault secrets list -namespace=dev
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/sys/mounts
+vault secrets list -namespace=dev
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/sys/mounts
 
 # Configure Connection
-# vault write -namespace=dev mysql/config/db-mysql plugin_name=mysql-database-plugin allowed_roles="readonly" connection_url="{{username}}:{{password}}@tcp(10.0.1.100:3306)/" username="root" password=Password123456
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/mysql/config/db-mysql -d '{"plugin_name": "mysql-database-plugin","allowed_roles": "readonly","connection_url": "{{username}}:{{password}}@tcp(10.0.1.100:3306)/","username": "root","password": Password123456}'
+vault write -namespace=dev mysql/config/db-mysql plugin_name=mysql-database-plugin allowed_roles="readonly" connection_url="{{username}}:{{password}}@tcp(10.0.1.100:3306)/" username="root" password=Password123456
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/mysql/config/db-mysql -d '{"plugin_name": "mysql-database-plugin","allowed_roles": "readonly","connection_url": "{{username}}:{{password}}@tcp(10.0.1.100:3306)/","username": "root","password": Password123456}'
 
 # Read Connection
-# vault read -namespace=dev mysql/config/db-mysql
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/mysql/config/db-mysql
+vault read -namespace=dev mysql/config/db-mysql
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/mysql/config/db-mysql
 
 # List Connections
-# vault list -namespace=dev mysql/config
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/mysql/config
+vault list -namespace=dev mysql/config
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/mysql/config
 
 # Create Role
-# vault write -namespace=dev mysql/roles/readonly db_name=db-mysql creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}'; GRANT SELECT ON *.* TO '{{name}}'@'%';" default_ttl="1h" max_ttl="24h"
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/mysql/roles/readonly -d '{"db_name": "db-mysql","creation_statements": ["CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}'; GRANT SELECT ON *.* TO '{{name}}'@'%';"],"default_ttl": "1h","max_ttl": "24h"}'
+vault write -namespace=dev mysql/roles/readonly db_name=db-mysql creation_statements="CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}'; GRANT SELECT ON *.* TO '{{name}}'@'%';" default_ttl="1h" max_ttl="24h"
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/mysql/roles/readonly -d '{"db_name": "db-mysql","creation_statements": ["CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}'; GRANT SELECT ON *.* TO '{{name}}'@'%';"],"default_ttl": "1h","max_ttl": "24h"}'
 
 # Read Role
-# vault read -namespace=dev mysql/roles/readonly
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/mysql/roles/readonly
+vault read -namespace=dev mysql/roles/readonly
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/mysql/roles/readonly
 
 # List Roles
-# vault list -namespace=dev mysql/roles
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/mysql/roles
+vault list -namespace=dev mysql/roles
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/mysql/roles
 
 # Generate Credentials
-# vault read -namespace=dev mysql/creds/readonly
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/mysql/creds/readonly
+vault read -namespace=dev mysql/creds/readonly
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/mysql/creds/readonly
 
-# mysql -u v-root-readonly-gRcz8UlwQ6Uzne0d -h 127.0.0.1 -p
-# vault lease revoke -namespace=dev -force -prefix mysql/creds
+# Test
+mysql -u v-root-readonly-gRcz8UlwQ6Uzne0d -h 127.0.0.1 -p
+
+# Revoke Lease
+vault lease revoke -namespace=dev -force -prefix mysql/creds
 
 # Delete Role
-# vault delete -namespace=dev mysql/roles/readonly
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/mysql/roles/readonly
+vault delete -namespace=dev mysql/roles/readonly
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/mysql/roles/readonly
 
 # Delete Connection
-# vault delete -namespace=dev mysql/config/db-mysql
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/mysql/config/db-mysql
+vault delete -namespace=dev mysql/config/db-mysql
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/mysql/config/db-mysql
 
 # Disable Database
-# vault secrets disable -namespace=dev mysql
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/sys/mounts/mysql
+vault secrets disable -namespace=dev mysql
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/sys/mounts/mysql
+*/

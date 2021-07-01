@@ -1,6 +1,7 @@
 # Name: ds-elastic.tf
 # Owner: Saurav Mitra
 # Description: This terraform config will create Vault Dynamic Secrets Engine For Elasticsearch database
+# Generates database credentials dynamically based on configured roles for Elasticsearch database.
 
 resource "vault_mount" "elastic" {
   path     = "elastic"
@@ -66,53 +67,58 @@ resource "vault_database_secret_backend_role" "dev-role-elastic" {
 
 
 
+/*
 # Enable Database
-# vault secrets enable -namespace=dev -path=elastic database
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/sys/mounts/elastic -d '{"type": "database"}'
+vault secrets enable -namespace=dev -path=elastic database
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/sys/mounts/elastic -d '{"type": "database"}'
 
 # List Secrets Engines
-# vault secrets list -namespace=dev
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/sys/mounts
+vault secrets list -namespace=dev
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/sys/mounts
 
 # Configure Connection
-# vault write -namespace=dev elastic/config/db-elastic plugin_name=elasticsearch-database-plugin allowed_roles="readonly" url="http://10.0.1.100:9200" username="elastic" password=Password123456
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/elastic/config/db-elastic -d '{"plugin_name": "elasticsearch-database-plugin","allowed_roles": "readonly","url": "http://10.0.1.100:9200","username": "elastic","password": Password123456}'
+vault write -namespace=dev elastic/config/db-elastic plugin_name=elasticsearch-database-plugin allowed_roles="readonly" url="http://10.0.1.100:9200" username="elastic" password=Password123456
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/elastic/config/db-elastic -d '{"plugin_name": "elasticsearch-database-plugin", "allowed_roles": "readonly", "url": "http://10.0.1.100:9200", "username": "elastic", "password": Password123456}'
 
 # Read Connection
-# vault read -namespace=dev elastic/config/db-elastic
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/elastic/config/db-elastic
+vault read -namespace=dev elastic/config/db-elastic
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/elastic/config/db-elastic
 
 # List Connections
-# vault list -namespace=dev elastic/config
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/elastic/config
+vault list -namespace=dev elastic/config
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/elastic/config
 
 # Create Role
-# vault write -namespace=dev elastic/roles/readonly db_name=db-elastic creation_statements='{"elasticsearch_roles": ["kibana_admin"]}' default_ttl="1h" max_ttl="24h"
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/elastic/roles/readonly -d '{"db_name": "db-elastic","creation_statements": ['{"elasticsearch_roles": ["kibana_admin"]}'],"default_ttl": "1h","max_ttl": "24h"}'
+vault write -namespace=dev elastic/roles/readonly db_name=db-elastic creation_statements='{"elasticsearch_roles": ["kibana_admin"]}' default_ttl="1h" max_ttl="24h"
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/elastic/roles/readonly -d '{"db_name": "db-elastic", "creation_statements": ['{"elasticsearch_roles": ["kibana_admin"]}'], "default_ttl": "1h", "max_ttl": "24h"}'
 
 # Read Role
-# vault read -namespace=dev elastic/roles/readonly
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/elastic/roles/readonly
+vault read -namespace=dev elastic/roles/readonly
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/elastic/roles/readonly
 
 # List Roles
-# vault list -namespace=dev elastic/roles
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/elastic/roles
+vault list -namespace=dev elastic/roles
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/elastic/roles
 
 # Generate Credentials
-# vault read -namespace=dev elastic/creds/readonly
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/elastic/creds/readonly
+vault read -namespace=dev elastic/creds/readonly
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/elastic/creds/readonly
 
-# Login to Kibana with user v-root-readonly-8nTLuBqrBd02rTuBOmRi-1624946966 http://10.0.1.100:5600
-# vault lease revoke -namespace=dev -force -prefix elastic/creds
+# Test
+# Login to Kibana with generated username & password at http://10.0.1.100:5600
+
+# Revoke Lease
+vault lease revoke -namespace=dev -force -prefix elastic/creds
 
 # Delete Role
-# vault delete -namespace=dev elastic/roles/readonly
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/elastic/roles/readonly
+vault delete -namespace=dev elastic/roles/readonly
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/elastic/roles/readonly
 
 # Delete Connection
-# vault delete -namespace=dev elastic/config/db-elastic
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/elastic/config/db-elastic
+vault delete -namespace=dev elastic/config/db-elastic
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/elastic/config/db-elastic
 
 # Disable Database
-# vault secrets disable -namespace=dev elastic
-# curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/sys/mounts/elastic
+vault secrets disable -namespace=dev elastic
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X DELETE $VAULT_ADDR/v1/sys/mounts/elastic
+*/
