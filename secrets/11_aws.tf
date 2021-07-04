@@ -8,8 +8,8 @@ resource "vault_aws_secret_backend" "aws" {
   path                      = "aws"
   access_key                = var.secrets_aws_access_key
   secret_key                = var.secrets_aws_secret_key
-  default_lease_ttl_seconds = "3600"
-  max_lease_ttl_seconds     = "86400"
+  default_lease_ttl_seconds = 3600
+  max_lease_ttl_seconds     = 86400
   provider                  = vault.root
 }
 
@@ -38,8 +38,8 @@ resource "vault_aws_secret_backend" "dev-aws" {
   path                      = "aws"
   access_key                = var.secrets_aws_access_key
   secret_key                = var.secrets_aws_secret_key
-  default_lease_ttl_seconds = "3600"
-  max_lease_ttl_seconds     = "86400"
+  default_lease_ttl_seconds = 3600
+  max_lease_ttl_seconds     = 86400
   provider                  = vault.dev
   depends_on                = [var.dev_namespace]
 }

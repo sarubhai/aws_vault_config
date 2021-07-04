@@ -23,3 +23,10 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore local files
+*.cert
+*.csr
+*.key
+*.png
+*.sh

@@ -9,6 +9,19 @@ resource "vault_mount" "kv-v2" {
   provider = vault.root
 }
 
+resource "vault_generic_secret" "kv-secret" {
+  path = "kv/dev_db_creds"
+
+  data_json = <<EOT
+{
+  "name": "admin",
+  "pass": "password"
+}
+EOT
+
+  provider   = vault.root
+  depends_on = [vault_mount.kv-v2]
+}
 
 
 resource "vault_mount" "dev-kv-v2" {
@@ -16,6 +29,20 @@ resource "vault_mount" "dev-kv-v2" {
   path       = "kv"
   provider   = vault.dev
   depends_on = [var.dev_namespace]
+}
+
+resource "vault_generic_secret" "dev-kv-secret" {
+  path = "kv/dev_db_creds"
+
+  data_json = <<EOT
+{
+  "name": "dev",
+  "pass": "password"
+}
+EOT
+
+  provider   = vault.dev
+  depends_on = [var.dev_namespace, vault_mount.dev-kv-v2]
 }
 
 

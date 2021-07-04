@@ -102,23 +102,52 @@ path "database/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 
+path "elastic/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "mongo/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "mysql/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "oracle/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "postgres/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
 # Identity secrets engine
 path "identity/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 
 # PKI secrets engine
-path "nomad/*" {
+path "pki/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "pki_int/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 
 # Nomad secrets engine
-path "pki/*" {
+path "nomad/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 
 # RabbitMQ secrets engine
 path "rabbitmq/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+# OpenLDAP secrets engine
+path "openldap/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 
@@ -129,6 +158,10 @@ path "ssh/*" {
 
 # TOTP secrets engine
 path "totp/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+path "totp-gen/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 
@@ -300,5 +333,10 @@ path "sys/sealwrap/rewrap" {
 
 # KMIP secrets engine
 path "kmip/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
+}
+
+# Transit secrets engine
+path "transform/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }

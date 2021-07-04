@@ -3,63 +3,64 @@
 # Description: This terraform config will create Vault Dynamic Secrets Engine For Oracle database
 # Generates database credentials dynamically based on configured roles for Oracle database.
 
-# resource "vault_mount" "oracle" {
-#   path     = "oracle"
-#   type     = "database"
-#   provider = vault.root
-# }
 
-# resource "vault_database_secret_backend_connection" "oracle-con" {
-#   backend       = vault_mount.oracle.path
-#   name          = "db-oracle"
-#   allowed_roles = ["readonly"]
+resource "vault_mount" "oracle" {
+  path     = "oracle"
+  type     = "database"
+  provider = vault.root
+}
 
-#   oracle {
-#     connection_url = "orcl_user/${var.admin_password}@10.0.1.100:1521/XE"
-#   }
+resource "vault_database_secret_backend_connection" "oracle-con" {
+  backend       = vault_mount.oracle.path
+  name          = "db-oracle"
+  allowed_roles = ["readonly"]
 
-#   provider   = vault.root
-#   depends_on = [vault_mount.oracle]
-# }
+  oracle {
+    connection_url = "orcl_user/${var.admin_password}@10.0.1.100:1521/XE"
+  }
 
-# resource "vault_database_secret_backend_role" "role-oracle" {
-#   backend             = vault_mount.oracle.path
-#   name                = "readonly"
-#   db_name             = vault_database_secret_backend_connection.oracle-con.name
-#   creation_statements = ["CREATE USER {{username}} IDENTIFIED BY \"{{password}}\"; GRANT CONNECT TO {{username}}; GRANT CREATE SESSION TO {{username}};"]
-#   provider   = vault.root
-#   depends_on = [vault_mount.oracle, vault_database_secret_backend_connection.oracle-con]
-# }
+  provider   = vault.root
+  depends_on = [vault_mount.oracle]
+}
+
+resource "vault_database_secret_backend_role" "role-oracle" {
+  backend             = vault_mount.oracle.path
+  name                = "readonly"
+  db_name             = vault_database_secret_backend_connection.oracle-con.name
+  creation_statements = ["CREATE USER {{username}} IDENTIFIED BY \"{{password}}\"; GRANT CONNECT TO {{username}}; GRANT CREATE SESSION TO {{username}};"]
+  provider            = vault.root
+  depends_on          = [vault_mount.oracle, vault_database_secret_backend_connection.oracle-con]
+}
 
 
-# resource "vault_mount" "dev-oracle" {
-#   path     = "oracle"
-#   type     = "database"
-#   provider = vault.dev
-#   depends_on = [var.dev_namespace]
-# }
+resource "vault_mount" "dev-oracle" {
+  path       = "oracle"
+  type       = "database"
+  provider   = vault.dev
+  depends_on = [var.dev_namespace]
+}
 
-# resource "vault_database_secret_backend_connection" "dev-oracle-con" {
-#   backend       = vault_mount.dev-oracle.path
-#   name          = "db-oracle"
-#   allowed_roles = ["readonly"]
+resource "vault_database_secret_backend_connection" "dev-oracle-con" {
+  backend       = vault_mount.dev-oracle.path
+  name          = "db-oracle"
+  allowed_roles = ["readonly"]
 
-#   oracle {
-#     connection_url = "orcl_user/${var.admin_password}@10.0.1.100:1521/XE
-#   }
+  oracle {
+    connection_url = "orcl_user/${var.admin_password}@10.0.1.100:1521/XE"
+  }
 
-#   provider   = vault.dev
-#   depends_on = [var.dev_namespace, vault_mount.dev-oracle]
-# }
+  provider   = vault.dev
+  depends_on = [var.dev_namespace, vault_mount.dev-oracle]
+}
 
-# resource "vault_database_secret_backend_role" "dev-role-oracle" {
-#   backend             = vault_mount.dev-oracle.path
-#   name                = "readonly"
-#   db_name             = vault_database_secret_backend_connection.oracle-con.name
-#   creation_statements = ["CREATE USER {{username}} IDENTIFIED BY \"{{password}}\"; GRANT CONNECT TO {{username}}; GRANT CREATE SESSION TO {{username}};"]
-#   provider   = vault.dev
-#   depends_on = [var.dev_namespace, vault_mount.dev-oracle, vault_database_secret_backend_connection.dev-oracle-con]
-# }
+resource "vault_database_secret_backend_role" "dev-role-oracle" {
+  backend             = vault_mount.dev-oracle.path
+  name                = "readonly"
+  db_name             = vault_database_secret_backend_connection.oracle-con.name
+  creation_statements = ["CREATE USER {{username}} IDENTIFIED BY \"{{password}}\"; GRANT CONNECT TO {{username}}; GRANT CREATE SESSION TO {{username}};"]
+  provider            = vault.dev
+  depends_on          = [var.dev_namespace, vault_mount.dev-oracle, vault_database_secret_backend_connection.dev-oracle-con]
+}
 
 
 
@@ -101,7 +102,7 @@ vault read -namespace=dev oracle/creds/readonly
 curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/oracle/creds/readonly
 
 # Test
-sqlplus "orcl_user/oracle_password@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.1.100)(PORT=1521))(CONNECT_DATA=(SID=XE)))"
+sqlplus "V_ROOT_READONLY_CHJJW4CLXWWWUA/Nb-9nu7nBwN5XRSN43f3@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.1.100)(PORT=1521))(CONNECT_DATA=(SID=XE)))"
 
 # Revoke Lease
 vault lease revoke -namespace=dev -force -prefix oracle/creds
