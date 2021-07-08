@@ -100,6 +100,7 @@ secrets_aws_secret_key = "ABCDEFGHIJ1234567890KLMNOPQRYZ"
 ```
 export VAULT_TOKEN=s.ZaXY7yVwKBKalAjmCJTMy3y3
 export VAULT_ADDR=https://dc1-vault1.local:8200
+vault status
 ```
 
 - terraform init

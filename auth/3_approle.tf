@@ -1,7 +1,7 @@
 # Name: approle.tf
 # Owner: Saurav Mitra
 # Description: This terraform config will create Vault AppRole Auth Method
-# The approle auth method allows machines or apps to authenticate with Vault-defined roles. 
+# The approle auth method allows machines or apps to authenticate with Vault-defined roles.
 
 resource "vault_auth_backend" "approle" {
   type     = "approle"

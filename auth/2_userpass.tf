@@ -70,7 +70,7 @@ vault list -namespace=dev auth/userpass/users
 curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X LIST $VAULT_ADDR/v1/auth/userpass/users
 
 # User Login
-vault login -method=userpass username=admin password=Password123456
+vault login -namespace=dev -method=userpass username=admin password=Password123456
 curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/auth/userpass/login/admin -d '{"password": "Password123456"}'
 
 # Update User Password

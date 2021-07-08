@@ -1,7 +1,7 @@
 # Name: userpass.tf
 # Owner: Saurav Mitra
 # Description: This terraform config will create Vault KV Secrets Engine - Version 2
-# The kv secrets engine is a generic Key-Value store used to store arbitrary secrets
+# The kv secrets engine is a generic Key-Value store used to store arbitrary secrets.
 
 resource "vault_mount" "kv-v2" {
   type     = "kv-v2"

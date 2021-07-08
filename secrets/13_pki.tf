@@ -5,9 +5,10 @@
 # Acquire certificates without going through the usual manual process of generating a private key and Certificate Signing Request (CSR), 
 # submitting to a Certificate Authority (CA), and then waiting for the verification and signing process to complete.
 # Use Vault to create X.509 certificates for usage in Mutual Transport Layer Security (MTLS) or other arbitrary PKI encryption. 
-# This solution can be used to create web server certificates,
+# This solution can be used to create web server certificates.
 
-resource "vault_pki_secret_backend" "pki" {
+resource "vault_mount" "pki" {
+  type                      = "pki"
   path                      = "pki"
   default_lease_ttl_seconds = 157680000
   max_lease_ttl_seconds     = 157680000
@@ -15,7 +16,7 @@ resource "vault_pki_secret_backend" "pki" {
 }
 
 resource "vault_pki_secret_backend_root_cert" "root_ca" {
-  backend              = vault_pki_secret_backend.pki.path
+  backend              = vault_mount.pki.path
   type                 = "internal"
   common_name          = "example.com"
   organization         = "SaruBhai"
@@ -30,10 +31,11 @@ resource "vault_pki_secret_backend_root_cert" "root_ca" {
   key_bits             = 2048
   exclude_cn_from_sans = true
   provider             = vault.root
-  depends_on           = [vault_pki_secret_backend.pki]
+  depends_on           = [vault_mount.pki]
 }
 
-resource "vault_pki_secret_backend" "pki_int" {
+resource "vault_mount" "pki_int" {
+  type                      = "pki"
   path                      = "pki_int"
   default_lease_ttl_seconds = 157680000
   max_lease_ttl_seconds     = 157680000
@@ -41,7 +43,7 @@ resource "vault_pki_secret_backend" "pki_int" {
 }
 
 resource "vault_pki_secret_backend_intermediate_cert_request" "intermediate_csr" {
-  backend              = vault_pki_secret_backend.pki_int.path
+  backend              = vault_mount.pki_int.path
   type                 = "internal"
   common_name          = "example.com Intermediate Authority"
   organization         = "SaruBhai"
@@ -52,11 +54,11 @@ resource "vault_pki_secret_backend_intermediate_cert_request" "intermediate_csr"
   format               = "pem"
   exclude_cn_from_sans = true
   provider             = vault.root
-  depends_on           = [vault_pki_secret_backend.pki_int]
+  depends_on           = [vault_mount.pki_int]
 }
 
 resource "vault_pki_secret_backend_root_sign_intermediate" "root_sign_intermediate_csr" {
-  backend              = vault_pki_secret_backend.pki.path
+  backend              = vault_mount.pki.path
   csr                  = vault_pki_secret_backend_intermediate_cert_request.intermediate_csr.csr
   common_name          = "example.com Intermediate Authority"
   organization         = "SaruBhai"
@@ -68,18 +70,18 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "root_sign_intermedia
   format               = "pem"
   exclude_cn_from_sans = true
   provider             = vault.root
-  depends_on           = [vault_pki_secret_backend.pki, vault_pki_secret_backend_intermediate_cert_request.intermediate_csr]
+  depends_on           = [vault_mount.pki, vault_pki_secret_backend_intermediate_cert_request.intermediate_csr]
 }
 
 resource "vault_pki_secret_backend_intermediate_set_signed" "intermediate_ca" {
-  backend     = vault_pki_secret_backend.pki_int.path
+  backend     = vault_mount.pki_int.path
   certificate = vault_pki_secret_backend_root_sign_intermediate.root_sign_intermediate_csr.certificate
   provider    = vault.root
-  depends_on  = [vault_pki_secret_backend.pki_int, vault_pki_secret_backend_root_sign_intermediate.root_sign_intermediate_csr]
+  depends_on  = [vault_mount.pki_int, vault_pki_secret_backend_root_sign_intermediate.root_sign_intermediate_csr]
 }
 
 resource "vault_pki_secret_backend_role" "role_example_dot_com" {
-  backend          = vault_pki_secret_backend.pki_int.path
+  backend          = vault_mount.pki_int.path
   name             = "example-dot-com"
   allowed_domains  = ["example.com"]
   allow_subdomains = true
@@ -87,8 +89,9 @@ resource "vault_pki_secret_backend_role" "role_example_dot_com" {
   allow_ip_sans    = true
   key_type         = "rsa"
   key_bits         = 2048
+  key_usage        = ["DigitalSignature", "KeyAgreement", "KeyEncipherment"]
   provider         = vault.root
-  depends_on       = [vault_pki_secret_backend.pki_int]
+  depends_on       = [vault_mount.pki_int]
 }
 
 

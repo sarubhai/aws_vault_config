@@ -23,12 +23,15 @@ resource "vault_database_secret_backend_connection" "postgres-con" {
 }
 
 resource "vault_database_secret_backend_role" "role-postgres" {
-  backend             = vault_mount.postgres.path
-  name                = "readonly"
-  db_name             = vault_database_secret_backend_connection.postgres-con.name
-  creation_statements = ["CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";"]
-  provider            = vault.root
-  depends_on          = [vault_mount.postgres, vault_database_secret_backend_connection.postgres-con]
+  backend               = vault_mount.postgres.path
+  name                  = "readonly"
+  db_name               = vault_database_secret_backend_connection.postgres-con.name
+  creation_statements   = ["CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";"]
+  revocation_statements = ["SET ROLE postgres; DROP ROLE IF EXISTS \"{{name}}\";"]
+  default_ttl           = 3600
+  max_ttl               = 86400
+  provider              = vault.root
+  depends_on            = [vault_mount.postgres, vault_database_secret_backend_connection.postgres-con]
 }
 
 
@@ -53,12 +56,15 @@ resource "vault_database_secret_backend_connection" "dev-postgres-con" {
 }
 
 resource "vault_database_secret_backend_role" "dev-role-postgres" {
-  backend             = vault_mount.dev-postgres.path
-  name                = "readonly"
-  db_name             = vault_database_secret_backend_connection.postgres-con.name
-  creation_statements = ["CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";"]
-  provider            = vault.dev
-  depends_on          = [var.dev_namespace, vault_mount.dev-postgres, vault_database_secret_backend_connection.dev-postgres-con]
+  backend               = vault_mount.dev-postgres.path
+  name                  = "readonly"
+  db_name               = vault_database_secret_backend_connection.postgres-con.name
+  creation_statements   = ["CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";"]
+  revocation_statements = ["SET ROLE postgres; DROP ROLE IF EXISTS \"{{name}}\";"]
+  default_ttl           = 3600
+  max_ttl               = 7200
+  provider              = vault.dev
+  depends_on            = [var.dev_namespace, vault_mount.dev-postgres, vault_database_secret_backend_connection.dev-postgres-con]
 }
 
 

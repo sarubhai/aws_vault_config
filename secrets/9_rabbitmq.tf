@@ -64,6 +64,14 @@ curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -
 vault write -namespace=dev rabbitmq/config/connection connection_uri=http://10.0.1.100:15672 username="rabbitmq" password=Password123456
 curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/rabbitmq/config/connection -d '{"connection_uri": "http://10.0.1.100:15672", "username": "rabbitmq", "password": Password123456}'
 
+# Configure Lease
+vault write -namespace=dev rabbitmq/config/lease ttl=1800 max_ttl=3600
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/rabbitmq/config/lease -d '{"ttl": 1800, "max_ttl": 3600 }'
+
+# Read Lease
+vault read -namespace=dev rabbitmq/config/lease
+curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X GET $VAULT_ADDR/v1/rabbitmq/config/lease
+
 # Create Role
 vault write -namespace=dev rabbitmq/roles/deploy vhosts='{"/":{"configure": ".*", "write": ".*", "read": ".*"}}'
 curl -H "X-Vault-Token: $VAULT_TOKEN" -H "X-Vault-Namespace: $VAULT_NAMESPACE" -X POST $VAULT_ADDR/v1/rabbitmq/roles/deploy -d '{"vhosts": "{\"/\": {\"configure\":\".*\", \"write\":\".*\", \"read\": \".*\"}}"}'

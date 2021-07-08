@@ -29,4 +29,4 @@ terraform.rc
 *.csr
 *.key
 *.png
-*.sh
+*.txt
