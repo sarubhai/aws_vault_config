@@ -13,8 +13,8 @@ sudo apt-get --assume-yes --quiet install nginx        >> /dev/null
 /etc/ssl/private/webapp.key
 
 # Update CA Certs
-/etc/pki/ca-trust/source/anchors/ca.cert
-sudo update-ca-trust
+# /etc/pki/ca-trust/source/anchors/ca.cert
+# sudo update-ca-trust
 
 sudo tee /etc/nginx/sites-available/default <<EOF
 server {
