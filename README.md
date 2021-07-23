@@ -120,4 +120,4 @@ vault status
 - terraform apply -auto-approve -refresh=false
 
 - Finally login to Vault UI https://dc1-vault1.local:8200/ui to validate the configurations
-- Login with root token or UserPass method with admin &admin_password
+- Login with root token or UserPass method with admin & admin_password
