@@ -1,6 +1,12 @@
 # Vault Configuration:
 
-Configure Vault cluster using Terraform
+Configure Vault cluster using Terraform.
+
+Various Vault Configurations of Auth, Secrets etc. using CLI, API & terraform Automation All In One place.
+
+Refer to the below link to setup Vault Cluster in AWS using Terraform
+
+- Use [https://github.com/sarubhai/aws_vault](https://github.com/sarubhai/aws_vault)
 
 ## Manage Secrets and Protect Sensitive Data
 
@@ -20,7 +26,7 @@ Types:
 - GitHub, [RADIUS, Cloud Foundry]
 - TLS Certificates
 - AWS, [Azure, GoogleCloud, AliCloud, OracleCloudInfrastructure]
-- [Kubernetes]
+- Kubernetes
 - [Kerberos]
 - [JWT/OIDC]
 
@@ -103,6 +109,11 @@ auth_aws_secret_key = "ABCDEFGHIJ1234567890KLMNOPQRST"
 secrets_aws_access_key = "ABCDEFGHIJKLMNOPQRYZ"
 
 secrets_aws_secret_key = "ABCDEFGHIJ1234567890KLMNOPQRYZ"
+
+kubernetes_ca_cert = "/Users/John/.minikube/ca.crt"
+
+kubernetes_token_reviewer_jwt = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjJnZ..."
+
 ```
 
 - Change other variables in variables.tf file if needed
@@ -110,8 +121,8 @@ secrets_aws_secret_key = "ABCDEFGHIJ1234567890KLMNOPQRYZ"
 - From Command Line, set the Vault Login credentials
 
 ```
-export VAULT_TOKEN=s.ZaXY7yVwKBKalAjmCJTMy3y3
 export VAULT_ADDR=https://dc1-vault1.local:8200
+export VAULT_TOKEN=s.ZaXY7yVwKBKalAjmCJTMy3y3
 vault status
 ```
 

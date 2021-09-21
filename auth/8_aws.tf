@@ -10,12 +10,12 @@ resource "vault_auth_backend" "aws" {
 }
 
 resource "vault_aws_auth_backend_client" "aws_cli" {
-  backend    = vault_auth_backend.aws.path
-  access_key = var.auth_aws_access_key
-  secret_key = var.auth_aws_secret_key
+  backend                    = vault_auth_backend.aws.path
+  access_key                 = var.auth_aws_access_key
+  secret_key                 = var.auth_aws_secret_key
   iam_server_id_header_value = "dc1-vault1.local"
-  provider   = vault.root
-  depends_on = [vault_auth_backend.aws]
+  provider                   = vault.root
+  depends_on                 = [vault_auth_backend.aws]
 }
 
 resource "vault_aws_auth_backend_role" "webapp" {
@@ -40,12 +40,12 @@ resource "vault_auth_backend" "dev_aws" {
 }
 
 resource "vault_aws_auth_backend_client" "dev_aws_cli" {
-  backend    = vault_auth_backend.dev_aws.path
-  access_key = var.auth_aws_access_key
-  secret_key = var.auth_aws_secret_key
+  backend                    = vault_auth_backend.dev_aws.path
+  access_key                 = var.auth_aws_access_key
+  secret_key                 = var.auth_aws_secret_key
   iam_server_id_header_value = "dc1-vault1.local"
-  provider   = vault.dev
-  depends_on = [var.dev_namespace, vault_auth_backend.dev_aws]
+  provider                   = vault.dev
+  depends_on                 = [var.dev_namespace, vault_auth_backend.dev_aws]
 }
 
 resource "vault_aws_auth_backend_role" "dev_webapp" {

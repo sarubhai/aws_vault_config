@@ -54,16 +54,18 @@ module "auth" {
     vault.dev  = vault.dev
   }
 
-  dev_namespace       = vault_namespace.dev
-  admin_password      = var.admin_password
-  okta_org            = var.okta_org
-  github_org          = var.github_org
-  github_user         = var.github_user
-  github_team         = var.github_team
-  ca_cert_path        = var.ca_cert_path
-  aws_account_id      = var.aws_account_id
-  auth_aws_access_key = var.auth_aws_access_key
-  auth_aws_secret_key = var.auth_aws_secret_key
+  dev_namespace                 = vault_namespace.dev
+  admin_password                = var.admin_password
+  okta_org                      = var.okta_org
+  github_org                    = var.github_org
+  github_user                   = var.github_user
+  github_team                   = var.github_team
+  ca_cert_path                  = var.ca_cert_path
+  aws_account_id                = var.aws_account_id
+  auth_aws_access_key           = var.auth_aws_access_key
+  auth_aws_secret_key           = var.auth_aws_secret_key
+  kubernetes_ca_cert            = var.kubernetes_ca_cert
+  kubernetes_token_reviewer_jwt = var.kubernetes_token_reviewer_jwt
 }
 
 

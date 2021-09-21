@@ -66,6 +66,17 @@ variable "auth_aws_secret_key" {
   default     = "ABCDEFGHIJ1234567890KLMNOPQRST"
 }
 
+variable "kubernetes_ca_cert" {
+  description = "Kubernetes CA Certificate Path to setup Vault Auth method."
+  default     = "/Users/John/.minikube/ca.crt"
+}
+
+variable "kubernetes_token_reviewer_jwt" {
+  description = "Kubernetes Service Account JWT Token to setup Vault Auth method."
+  default     = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjJnZ..."
+}
+
+
 variable "secrets_aws_access_key" {
   description = "AWS Access Key to setup Vault Secrets engine."
   default     = "ABCDEFGHIJKLMNOPQRST"

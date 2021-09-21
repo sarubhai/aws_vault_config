@@ -32,15 +32,20 @@ variable "ca_cert_path" {
 
 variable "aws_account_id" {
   description = "AWS Account Id."
-  default     = "123456789012"
 }
 
 variable "auth_aws_access_key" {
   description = "AWS Access Key to setup Vault Auth method."
-  default     = "ABCDEFGHIJKLMNOPQRST"
 }
 
 variable "auth_aws_secret_key" {
   description = "AWS Secret Key to setup Vault Auth method."
-  default     = "ABCDEFGHIJ1234567890KLMNOPQRST"
+}
+
+variable "kubernetes_ca_cert" {
+  description = "Kubernetes CA Certificate Path to setup Vault Auth method."
+}
+
+variable "kubernetes_token_reviewer_jwt" {
+  description = "Kubernetes Service Account JWT Token to setup Vault Auth method."
 }
